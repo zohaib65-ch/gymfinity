@@ -1,0 +1,6 @@
+{
+  "name": "Gymfinity",
+  "description": "Gymfinity is a comprehensive, responsive Gym Management System for admins and receptionists to manage members, subscription plans, invoices, and attendance tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
