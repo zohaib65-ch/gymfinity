@@ -33,6 +33,7 @@ export default function MembersView() {
 
   // Modal / Form states
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [deleteConfirmMember, setDeleteConfirmMember] = useState<Member | null>(null);
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [newMemberPhone, setNewMemberPhone] = useState("");
@@ -136,13 +137,17 @@ export default function MembersView() {
   };
 
   // Delete Member
-  const handleDeleteMember = (memberId: string) => {
-    if (confirm("Are you sure you want to delete this member? All attendance and records will be archived.")) {
-      const updated = members.filter((m) => m.id !== memberId);
-      setMembers(updated);
-      saveMembers(updated);
-      setSelectedMember(updated[0] || null);
-    }
+  const handleDeleteMember = (member: Member) => {
+    setDeleteConfirmMember(member);
+  };
+
+  const confirmDeleteMember = () => {
+    if (!deleteConfirmMember) return;
+    const updated = members.filter((m) => m.id !== deleteConfirmMember.id);
+    setMembers(updated);
+    saveMembers(updated);
+    setSelectedMember(updated[0] || null);
+    setDeleteConfirmMember(null);
   };
 
   return (
@@ -335,7 +340,7 @@ export default function MembersView() {
                     </button>
                   )}
                   <button
-                    onClick={() => handleDeleteMember(selectedMember.id)}
+                    onClick={() => handleDeleteMember(selectedMember)}
                     className="rounded-lg border border-red-100 bg-red-50/50 p-2 text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                     title="Delete member profile"
                   >
@@ -535,6 +540,53 @@ export default function MembersView() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmMember && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-fade-in">
+          <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-slate-900">Delete Member</h3>
+              <button
+                onClick={() => setDeleteConfirmMember(null)}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 rounded-xl bg-red-50 border border-red-100 p-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                  <Trash2 className="h-5 w-5" />
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-sm font-bold text-slate-900">{deleteConfirmMember.name}</p>
+                  <p className="text-xs text-slate-500">{deleteConfirmMember.email}</p>
+                </div>
+              </div>
+              <p className="text-sm text-slate-600">
+                Are you sure you want to delete this member? All attendance and records will be permanently removed.
+              </p>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2 border-t border-slate-100">
+              <button
+                onClick={() => setDeleteConfirmMember(null)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteMember}
+                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-500 cursor-pointer"
+              >
+                Delete Member
+              </button>
+            </div>
           </div>
         </div>
       )}
